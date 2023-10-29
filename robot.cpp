@@ -13,3 +13,10 @@ bool Robot::collision_check(const Robot* other_robots, Point next_position) {
             return true;
     return false;
 }
+
+void Robot::move() { }
+
+void Robot::finalize() {
+    makespan_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+    position->blocked = true;
+}

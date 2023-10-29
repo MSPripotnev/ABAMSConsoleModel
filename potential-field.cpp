@@ -55,6 +55,13 @@ void PotentialRobot::move() {
         potential_map = build_potential_map(potential_map, other_robots, goal);
     else finalize();
 }
+void PotentialRobot::finalize() {
+    Robot::finalize();
+    makespan_ms = Robot::makespan_ms;
+    delete[] potential_map[0];
+    delete[] potential_map;
+    delete[] other_robots;
+}
 
 PotentialPoint** PotentialRobot::build_potential_map(PotentialPoint** Map, Robot** other_robots, Point goal) {
     PotentialPoint** PotentialMap = new PotentialPoint * [MAP_SIZE_X];

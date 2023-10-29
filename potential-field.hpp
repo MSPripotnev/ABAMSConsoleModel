@@ -26,6 +26,7 @@ struct PotentialPoint : Point {
 class PotentialRobot : Robot {
 public:
     PotentialPoint** potential_map;
+    int makespan_ms = 0;
     bool finish = false;
     PotentialRobot() {
         other_robots = nullptr;
@@ -47,16 +48,11 @@ public:
         potential_map = build_potential_map(PotentialPoint::get_nullpot_map(map), other_robots, goal);
     }
     void print_potential_map();
-    void move();
+    void move() override;
 private:
     Robot **other_robots;
     void escape_dead_end();
     Point select_direction();
     PotentialPoint** build_potential_map(PotentialPoint** Map, Robot** robots, Point goal);
-    void finalize() {
-        position->blocked = true;
-        delete [] potential_map[0];
-        delete [] potential_map;
-        delete [] other_robots;
-    }
+    void finalize() override;
 };

@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <tuple>
+#include <chrono>
 
 #include "input.hpp"
 #include "map.hpp"
@@ -16,17 +17,17 @@
 #define PRINT_MAP 1
 #define PRINT_POTENTIAL_MAP 0
 #define ROBOT_POTENTIAL_MAP_INDEX 1
-#define REFRESH_TIME 200
+#define REFRESH_TIME 1
 
-std::tuple<int, int> potential_field(Point **Map, Robot* robots, Point *goals) {
-    int makespan_it = 0, flowtime_it = 0;
+std::tuple<int, int, int> potential_field(Point **Map, Robot* robots, Point *goals) {
+    int makespan_ms = 0, makespan_it = 0, flowtime_it = 0;
     PotentialRobot* pot_robots = new PotentialRobot[ROBOTS_COUNT];
     for (int i = 0; i < ROBOTS_COUNT; i++)
         pot_robots[i] = PotentialRobot(robots[i], Map, robots);
     while (true) {
-        flowtime_it++;
         bool all_finish = true;
         for (int i = 0; i < ROBOTS_COUNT; i++) {
+            flowtime_it++;
 #if PRINT_POTENTIAL_MAP
             if (i == ROBOT_POTENTIAL_MAP_INDEX)
                 pot_robots[i].print_potential_map();
@@ -38,9 +39,11 @@ std::tuple<int, int> potential_field(Point **Map, Robot* robots, Point *goals) {
                 }
                 catch (...) {
                     std::cout << "Cannot find trajectory for robot#" << i;
-                    return std::forward_as_tuple(-1, -1);
+                    return std::forward_as_tuple(-1, -1, -1);
                 }
             }
+            else if (makespan_ms < pot_robots[i].makespan_ms)
+                makespan_ms += pot_robots[i].makespan_ms;
 #if PRINT_POTENTIAL_MAP > 1
             if (i == ROBOT_POTENTIAL_MAP_INDEX)
                 pot_robots[i].print_potential_map();
@@ -54,7 +57,7 @@ std::tuple<int, int> potential_field(Point **Map, Robot* robots, Point *goals) {
         if (all_finish)
             break;
     }
-    return std::forward_as_tuple(makespan_it, flowtime_it);
+    return std::forward_as_tuple(makespan_it, flowtime_it, makespan_ms);
 }
 
 int main() {
@@ -70,9 +73,15 @@ int main() {
     stream.close();
     print_map(map, robots, goals);
 
-    int makespan_it, flowtime_it = 0;
-    std::tie(makespan_it, flowtime_it) = potential_field(map, robots, goals);
-    std::cout << "PotentialFields:\nMakespan = " << makespan_it << "\nFlowtime = " << flowtime_it;
+    int makespan_it, flowtime_it = 0, makespan_ms = 0;
+    auto start = std::chrono::steady_clock::now();
+    std::tie(makespan_it, flowtime_it, makespan_ms) = potential_field(map, robots, goals);
+    auto potential_time = std::chrono::steady_clock::now();
+    std::cout << "PotentialFields:" << std::endl <<
+        "Makespan = " << makespan_it << " it" << std::endl <<
+        makespan_ms << " ms" << std::endl <<
+        "Flowtime = " << flowtime_it << " it" << std::endl <<
+        std::chrono::duration_cast<std::chrono::milliseconds>(potential_time - start).count() << " ms";
 
     delete[] map[0];
     delete[] map;

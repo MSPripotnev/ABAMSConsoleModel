@@ -1,5 +1,6 @@
 # Prerequisites
 *.d
+*.vc*
 
 # Compiled Object files
 *.slo
@@ -32,4 +33,3 @@
 *.app
 /.vs
 /x64
-/DZ1Console.vcxproj
