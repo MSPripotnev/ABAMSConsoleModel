@@ -43,11 +43,10 @@ Point PotentialRobot::select_direction() {
 }
 
 void PotentialRobot::move() {
-    this->position->blocked = false;
     Point next = select_direction();
     if (collision_check(*other_robots, next))
         return;
-    *this->position = next;
+    this->position->blocked = false;
     trajectory.push_back(*this->position);
     escape_dead_end();
 

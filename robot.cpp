@@ -17,6 +17,7 @@ bool Robot::collision_check(const Robot* other_robots, Point next_position) {
 void Robot::move() { }
 
 void Robot::finalize() {
-    makespan_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+    makespan_ms = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+    finish = true;
     position->blocked = true;
 }

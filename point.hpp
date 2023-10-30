@@ -22,10 +22,14 @@ struct Point {
     friend bool operator==(Point p1, Point p2) {
         return p1.x == p2.x && p1.y == p2.y;
     }
+    friend bool operator!=(Point p1, Point p2) {
+        return ! (p1 == p2);
+    }
     friend Point operator-(Point p1, Point p2) {
         return *(new Point(p1.x - p2.x, p1.y - p2.y));
     }
 };
 
+bool point_is_out_of_range(Point p);
 int distance_to(Point p1, Point p2);
 int distance_to_near(Point* goals, Point* p);

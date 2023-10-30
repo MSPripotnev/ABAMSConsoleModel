@@ -4,6 +4,12 @@
 
 #define MAX_OBSTACLE_POTENTIAL 2
 
+bool point_is_out_of_range(Point p) {
+    return p.x < 0 || p.y < 0 ||
+        p.x >= MAP_SIZE_X || p.y >= MAP_SIZE_Y ||
+        p.blocked;
+}
+
 int distance_to_obstacle(Point** map, Point p) {
     int min = 999;
     for (int i = 0; i < MAX_OBSTACLE_POTENTIAL; i++)
