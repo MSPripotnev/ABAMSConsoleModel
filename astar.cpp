@@ -1,4 +1,5 @@
 #include "astar.hpp"
+#include "visualizator.hpp"
 #include "map.hpp"
 #include <vector>
 
@@ -42,6 +43,12 @@ void AStarSystem::open_points() {
                 if (!closedPoints.count(node))
                     openedPoints.insert(node);
             }
+    for (auto& i : openedPoints) {
+        for (const MultiAStarNode* node = &i; node; node = node->parent) {
+
+        }
+    }
+    graph_to_dot(openedPoints);
 }
 
 MultiAStarNode AStarSystem::select_direction() {
