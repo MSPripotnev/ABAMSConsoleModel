@@ -1,8 +1,8 @@
 ﻿/*
 * Бригада:
 *   - Волков Виктор
-*   - Панфилов Александр
 *   - Припотнев Михаил
+*   - Радван Ахмед
 */
 #include <chrono>
 #include <fstream>
@@ -147,4 +147,3 @@ int main() {
     delete[] goals;
     delete[] robots;
 }
-
