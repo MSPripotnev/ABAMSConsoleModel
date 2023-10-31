@@ -3,6 +3,11 @@
 #include <iostream>
 #include <fstream>
 
+void input(int* method, std::istream& stream) {
+    if (&stream == &std::cin)
+        std::cout << "Select method:\n1. A* for system graph\n2. Potential fields";
+    stream >> *method;
+}
 void input(Point* goals, std::istream &stream) {
     if (&stream == &std::cin)
         std::cout << "Enter goals coordinates in format '%d %d': " << std::endl;
