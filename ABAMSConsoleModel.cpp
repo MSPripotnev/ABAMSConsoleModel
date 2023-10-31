@@ -15,10 +15,10 @@
 #include "potential-field.hpp"
 #include "windows.h"
 
-#define PRINT_MAP 2 // 0 - disable, 1 - A*, 2 - PotentialFields, 3 - Both
+#define PRINT_MAP 0 // 0 - disable, 1 - A*, 2 - PotentialFields, 3 - Both
 #define PRINT_POTENTIAL_MAP 0 // 0 - disable potential map drawing, 1 - draw before move, 2 - draw after, 3 - both
 #define ROBOT_POTENTIAL_MAP_INDEX 1 // index of robot to draw his map for
-#define REFRESH_TIME 200 // sleep timer (in ms) before images changing
+#define REFRESH_TIME 1 // sleep timer (in ms) before images changing
 
 void output(const char* type, int *makespan_it, int *makespan_ms, int flowtime_it, int flowtime) {
     std::cout << type << ":" << std::endl <<
@@ -36,10 +36,10 @@ void output(const char* type, int *makespan_it, int *makespan_ms, int flowtime_i
             else std::cout << ")\n";
         }
     }
-    std::cout << "- Flowtime = " << flowtime_it << " it, " << flowtime << " ms" << std::endl;
+    std::cout << "\n- Flowtime = " << flowtime_it << " it, " << flowtime << " ms" << std::endl;
 }
 
-std::tuple<int(&)[ROBOTS_COUNT], int, int(&)[ROBOTS_COUNT]> potential_field(Point** map, Robot* robots, Point* goals) {
+std::tuple<int *, int, int *> potential_field(Point** map, Robot* robots, Point* goals) {
     int flowtime_it = 0;
     int makespan_it[ROBOTS_COUNT] = { 0, }, makespan_ms[ROBOTS_COUNT] = { 0, };
     PotentialRobot* pot_robots = new PotentialRobot[ROBOTS_COUNT];
@@ -71,17 +71,24 @@ std::tuple<int(&)[ROBOTS_COUNT], int, int(&)[ROBOTS_COUNT]> potential_field(Poin
 #if PRINT_POTENTIAL_MAP > 1
             if (i == ROBOT_POTENTIAL_MAP_INDEX)
                 pot_robots[i].print_potential_map();
-#endif
             Sleep(REFRESH_TIME);
+#endif
             all_finish &= pot_robots[i].finish;
         }
 #if PRINT_MAP == 2 || PRINT_MAP == 3
         print_map(map, robots, goals);
+        Sleep(REFRESH_TIME);
 #endif
         if (all_finish)
             break;
     }
-    return std::forward_as_tuple(makespan_it, flowtime_it, makespan_ms);
+    int* makespan_it_copy = new int[ROBOTS_COUNT], *makespan_ms_copy = new int[ROBOTS_COUNT];
+    for (int i = 0; i < ROBOTS_COUNT; i++) {
+        makespan_it_copy[i] = makespan_it[i];
+        makespan_ms_copy[i] = makespan_ms[i];
+    }
+
+    return std::make_tuple(makespan_it_copy, flowtime_it, makespan_ms_copy);
 }
 
 std::tuple<int *, int> astar_system(Point** map, Robot* robots, Point* goals) {
