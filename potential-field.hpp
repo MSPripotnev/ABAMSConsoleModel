@@ -6,9 +6,9 @@
 #include "robot.hpp"
 #include <vector>
 
-constexpr auto GOAL_POTENTIAL = 20;
-constexpr auto ROBOT_POTENTIAL = -4;
-constexpr auto OBSTACLE_POTENTIAL = -50;
+constexpr auto GOAL_POTENTIAL = 10;
+constexpr auto ROBOT_POTENTIAL = -2;
+constexpr auto OBSTACLE_POTENTIAL = -10;
 
 struct PotentialPoint : Point {
     int potential = 0;

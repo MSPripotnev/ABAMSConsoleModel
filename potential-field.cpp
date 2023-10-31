@@ -17,14 +17,15 @@ PotentialPoint** PotentialPoint::get_nullpot_map(Point** pot_map) {
 
 void PotentialRobot::escape_dead_end() {
     if (trajectory.size() > 5 && trajectory.back() == *(trajectory.end() - 3) && 
-        *(trajectory.end() - 3) == *(trajectory.end() - 5) && !collision_check(*other_robots, *(trajectory.end()-1))) {
-        Point p = trajectory[trajectory.size() - 1];
+        *(trajectory.end() - 3) == *(trajectory.end() - 5)) {
+        Point p = trajectory[trajectory.size() - 2];
         potential_map[p.x][p.y].blocked = true;
+        *position = *(trajectory.end() - 1);
     }
 }
 
 Point PotentialRobot::select_direction() {
-    int max_potential = 0;
+    int max_potential = -7;
     Point next_position;
     for (int i = 1; i < 9; i += 2) {
         //выбор направления
@@ -49,6 +50,7 @@ void PotentialRobot::move() {
     this->position->blocked = false;
     trajectory.push_back(*this->position);
     escape_dead_end();
+    *this->position = next;
 
     if (!(finish = *position == goal))
         potential_map = build_potential_map(potential_map, other_robots, goal);
